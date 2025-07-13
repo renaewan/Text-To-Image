@@ -1,11 +1,6 @@
 import { NextResponse } from 'next/server';
 import { fal } from "@fal-ai/client";
 
-// Configure FAL with API key
-fal.config({
-  credentials: process.env.FAL_API_KEY,
-});
-
 export async function POST(request: Request) {
   try {
     const { prompt, style, size } = await request.json();
@@ -13,6 +8,17 @@ export async function POST(request: Request) {
     if (!prompt) {
       return NextResponse.json({ error: 'Prompt is required' }, { status: 400 });
     }
+
+    // Check if API key is available
+    if (!process.env.FAL_API_KEY) {
+      console.error('FAL_API_KEY environment variable is missing');
+      return NextResponse.json({ error: 'API key not configured' }, { status: 500 });
+    }
+
+    // Configure FAL with API key
+    fal.config({
+      credentials: process.env.FAL_API_KEY,
+    });
 
     // Enhance prompt based on style
     let enhancedPrompt = prompt;
@@ -33,31 +39,32 @@ export async function POST(request: Request) {
         enhancedPrompt = `${prompt}, high quality, detailed`;
     }
 
-    // Convert size to aspect ratio
-    let aspectRatio = "1:1"; // default square
+    // Convert size to FAL image size format
+    let imageSize: "square_hd" | "square" | "portrait_4_3" | "portrait_16_9" | "landscape_4_3" | "landscape_16_9" = "square_hd";
     switch (size) {
       case "1024x768":
-        aspectRatio = "4:3";
+        imageSize = "landscape_4_3";
         break;
       case "768x1024":
-        aspectRatio = "3:4";
+        imageSize = "portrait_4_3";
         break;
       case "1024x1024":
       default:
-        aspectRatio = "1:1";
+        imageSize = "square_hd";
         break;
     }
 
     console.log('Generating image with prompt:', enhancedPrompt);
+    console.log('Using API key (first 10 chars):', process.env.FAL_API_KEY?.substring(0, 10));
 
-    const result = await fal.subscribe("fal-ai/flux-pro/v1.1-ultra", {
+    // Use a more reliable FAL model
+    const result = await fal.subscribe("fal-ai/flux/schnell", {
       input: {
         prompt: enhancedPrompt,
+        image_size: imageSize,
+        num_inference_steps: 4,
         num_images: 1,
         enable_safety_checker: true,
-        output_format: "jpeg",
-        safety_tolerance: "2",
-        aspect_ratio: aspectRatio
       },
       logs: true,
       onQueueUpdate: (update) => {
@@ -70,20 +77,28 @@ export async function POST(request: Request) {
     console.log('FAL API Result:', result.data);
 
     if (!result.data?.images || result.data.images.length === 0) {
+      console.error('No images in result:', result.data);
       return NextResponse.json({ error: 'No images generated' }, { status: 500 });
     }
 
     return NextResponse.json({ 
       imageUrl: result.data.images[0].url,
       prompt: enhancedPrompt,
-      width: result.data.images[0].width,
-      height: result.data.images[0].height
+      width: result.data.images[0].width || 1024,
+      height: result.data.images[0].height || 1024
     });
 
   } catch (error) {
     console.error('Error in image generation:', error);
+    
+    // More detailed error logging
+    if (error instanceof Error) {
+      console.error('Error message:', error.message);
+      console.error('Error stack:', error.stack);
+    }
+    
     return NextResponse.json({ 
-      error: 'Internal server error', 
+      error: 'Failed to generate image', 
       details: error instanceof Error ? error.message : 'Unknown error'
     }, { status: 500 });
   }
