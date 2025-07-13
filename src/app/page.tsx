@@ -61,7 +61,7 @@ export default function Home() {
         });
 
         return {
-          url: data.url,
+          url: data.imageUrl,
           prompt: prompt,
           index: index
         };
