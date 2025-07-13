@@ -198,7 +198,7 @@ export default function Home() {
                       d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
                     />
                   </svg>
-                  <span>What's an API?</span>
+                  <span>What&apos;s an API?</span>
                 </button>
               </div>
             </div>
@@ -279,7 +279,7 @@ export default function Home() {
                     <div className="bg-blue-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm font-bold">1</div>
                     <div>
                       <p className="font-medium text-gray-900">You make a request</p>
-                      <p className="text-gray-600 text-sm">"Hey API, can you generate an image of a sunset?"</p>
+                      <p className="text-gray-600 text-sm">&ldquo;Hey API, can you generate an image of a sunset?&rdquo;</p>
                     </div>
                   </div>
                   
@@ -295,7 +295,7 @@ export default function Home() {
                     <div className="bg-blue-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm font-bold">3</div>
                     <div>
                       <p className="font-medium text-gray-900">API sends back the result</p>
-                      <p className="text-gray-600 text-sm">"Here's your beautiful sunset image!"</p>
+                      <p className="text-gray-600 text-sm">&ldquo;Here&apos;s your beautiful sunset image!&rdquo;</p>
                     </div>
                   </div>
                 </div>
@@ -311,7 +311,7 @@ export default function Home() {
                       <span className="text-xl">🔌</span>
                       <h4 className="font-semibold text-gray-900">Like a Power Outlet</h4>
                     </div>
-                    <p className="text-gray-700 text-sm">You don't need to know how electricity works - just plug in and get power!</p>
+                    <p className="text-gray-700 text-sm">You don&apos;t need to know how electricity works - just plug in and get power!</p>
                   </div>
                   
                   <div className="border border-gray-200 rounded-lg p-4">
@@ -360,7 +360,7 @@ export default function Home() {
                 <p className="text-purple-800">
                   This image generator uses an API! When you type a description and hit generate, 
                   it sends your text to an AI service through an API, and gets back amazing images. 
-                  You don't need to know how AI works - the API handles all the complex stuff!
+                  You don&apos;t need to know how AI works - the API handles all the complex stuff!
                 </p>
               </div>
             </div>
